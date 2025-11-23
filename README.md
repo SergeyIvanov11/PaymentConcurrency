@@ -1,4 +1,4 @@
-Есть список счетов. Id счета, сколько денег, валюта. Сэмулировать процесс перевода денег со счета на счет в многопоточном режиме.
+Есть список [счетов](https://github.com/SergeyIvanov11/PaymentConcurrency/blob/review/src/main/java/dto/Account.java). Id счета, сколько денег, валюта. Сэмулировать [процесс перевода денег](https://github.com/SergeyIvanov11/PaymentConcurrency/blob/review/src/main/java/service/TransferService.java) со счета на счет в многопоточном режиме.
 
 - Прочитали список
 - Просуммировали, сколько денег у нас всего в системе (100500 рублей)
@@ -8,5 +8,7 @@
 - По результатам NxM операций сумма денег в системе должна быть 100500.
 - Залоггировать начало и конец операций, чтобы можно было понять, что операции идут в параллель
 
-(Паттерн Strategy)
+[Паттерн Strategy](https://github.com/SergeyIvanov11/PaymentConcurrency/blob/review/src/main/java/service/RandomTransferStrategy.java)
 -* выделить алгоритм перевода в отдельный метод и менять его при желании: 1) случайные счета и суммы 2) со случайного счета на счет у которого id больше на 1, и фиксированная сумма (100 рублей)
+
+* Воспроизвести [нарушение Happens-before](https://github.com/SergeyIvanov11/PaymentConcurrency/blob/review/src/main/java/HappensBeforeDoesntWork.java) и понять почему так и пофиксить
