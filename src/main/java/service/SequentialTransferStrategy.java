@@ -1,6 +1,6 @@
-package main.java.service;
+package service;
 
-import main.java.dto.Account;
+import dto.Account;
 
 import java.util.List;
 import java.util.Random;

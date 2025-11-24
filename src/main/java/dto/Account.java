@@ -1,16 +1,20 @@
-package main.java.dto;
+package dto;
 
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Account {
     private long id;
-    private AtomicLong amount;
+    private long amount;
     private String currency;
+    private Lock lock;
 
     public Account(long id, long amount, String currency) {
         this.id = id;
-        this.amount = new AtomicLong(amount);
+        this.amount = amount;
         this.currency = currency;
+        this.lock = new ReentrantLock();
     }
 
     public long getId() {
@@ -26,19 +30,26 @@ public class Account {
     }
 
     public long getAmount() {
-        return amount.get();
+        return amount;
     }
 
     public void add(long value) {
-        amount.addAndGet(value);
+        amount += value;
     }
 
-    public boolean subtract(long value) {
+    public void subtract(long value) {
+        amount -= value;
+        /*
         while(true) {
             long oldAmount = amount.get();
             if(oldAmount < value) return false;
             long newAmount = oldAmount - value;
             if(amount.compareAndSet(oldAmount, newAmount)) return true;
         }
+         */
+    }
+
+    public Lock getLock() {
+        return lock;
     }
 }

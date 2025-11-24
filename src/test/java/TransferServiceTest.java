@@ -1,9 +1,5 @@
-package test.java;
-
-import main.java.dto.Account;
-import main.java.service.TransferRequest;
-import main.java.service.TransferService;
-import main.java.service.TransferStrategy;
+import dto.Account;
+import service.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

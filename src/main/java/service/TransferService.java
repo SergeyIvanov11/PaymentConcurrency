@@ -1,6 +1,6 @@
-package main.java.service;
+package service;
 
-import main.java.dto.Account;
+import dto.Account;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,13 +20,13 @@ public class TransferService {
             threads.add(t);
             t.start();
         }
-        for (Thread t : threads) {
+        threads.forEach(t -> {
             try {
                 t.join();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
-        }
+        });
 
         /*
         ExecutorService service = Executors.newFixedThreadPool(10);
@@ -42,16 +42,13 @@ public class TransferService {
     }
 
     public String sumAccounts(List<Account> accounts){
-        if (accounts.isEmpty()) {
-            return "Счета отсутствуют";
-        }
+        if (accounts.isEmpty()) return "Счета отсутствуют";
 
         String currency = accounts.get(0).getCurrency();
-        long sum = 0;
 
-        for (Account acc : accounts) {
-            sum += acc.getAmount();
-        }
+        long sum = accounts.stream()
+                .mapToLong(Account::getAmount)
+                .sum();
 
         return sum + " " + currency;
     }

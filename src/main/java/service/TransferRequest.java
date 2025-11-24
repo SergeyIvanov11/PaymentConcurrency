@@ -1,6 +1,6 @@
-package main.java.service;
+package service;
 
-import main.java.dto.Account;
+import dto.Account;
 
 public class TransferRequest {
     Account from;

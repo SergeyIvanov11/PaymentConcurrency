@@ -1,5 +1,3 @@
-package main.java;
-
 public class HappensBeforeDoesntWork {
     private boolean flag = false;
     private int a = 0;

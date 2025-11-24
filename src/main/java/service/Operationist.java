@@ -1,8 +1,9 @@
-package main.java.service;
+package service;
 
-import main.java.dto.Account;
+import dto.Account;
 
 import java.util.List;
+import java.util.concurrent.locks.Lock;
 
 public class Operationist implements Runnable {
 
@@ -26,7 +27,7 @@ public class Operationist implements Runnable {
         System.out.println(Thread.currentThread().getName() + " завершил работу");
     }
 
-    public boolean transfer(TransferRequest request) {
+    private boolean transfer(TransferRequest request) {
         Account from = request.from;
         Account to = request.to;
         long amount = request.amount;
@@ -37,14 +38,35 @@ public class Operationist implements Runnable {
             return false;
         }
 
-        if (!from.subtract(amount)) {
-            System.out.println("Недостаточно средств на счёте " + from.getId());
-            return false;
+        for (int i = 0; i < 3; i++) { // попытки захватить локи
+            if (from.getLock().tryLock()) {
+                try {
+                    if (to.getLock().tryLock()) {
+                        try {
+                            if (from.getAmount() < amount) {
+                                System.out.println("Недостаточно средств " +
+                                        "для перевода с аккаунта " + from.getId());
+                                return false;
+                            }
+                            from.subtract(amount);
+                            to.add(amount);
+                            System.out.println(from.getId() + " перевел "
+                                    + to.getId() + " " + amount
+                                    + " " + from.getCurrency());
+
+                            return true;
+                        } finally {
+                            to.getLock().unlock();
+                        }
+                    }
+                } finally {
+                    from.getLock().unlock();
+                }
+            }
+            Thread.yield(); // уступить время другим потокам
         }
-        to.add(amount);
-        System.out.println(from.getId() + " перевел "
-                + to.getId() + " " + amount
-                + " " + from.getCurrency());
-        return true;
+
+        System.out.println("Не удалось захватить локи, пропуск операции");
+        return false;
     }
 }

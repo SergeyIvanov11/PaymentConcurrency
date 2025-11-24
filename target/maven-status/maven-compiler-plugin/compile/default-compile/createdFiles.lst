@@ -1,0 +1,9 @@
+dto\Account.class
+Main.class
+service\SequentialTransferStrategy.class
+service\Operationist.class
+HappensBeforeDoesntWork.class
+service\TransferStrategy.class
+service\TransferRequest.class
+service\TransferService.class
+service\RandomTransferStrategy.class

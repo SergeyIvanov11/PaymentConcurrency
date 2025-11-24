@@ -1,24 +1,30 @@
-package test.java;
-
-import main.java.dto.Account;
-import main.java.service.Operationist;
-import main.java.service.TransferRequest;
+import dto.Account;
+import org.junit.jupiter.api.BeforeEach;
+import service.*;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class OperationistTest {
+    TransferStrategy strategy;
+
+    @BeforeEach
+    void before() {
+        strategy = new SequentialTransferStrategy(100);
+    }
+
     @Test
     void transferShouldMoveMoneyBetweenAccounts() {
         Account a = new Account(1, 1000, "RUB");
         Account b = new Account(2, 500, "RUB");
 
-        Operationist op = new Operationist(null, 0, null);
-        boolean ok = op.transfer(new TransferRequest(a, b, 300));
+        Operationist op = new Operationist(List.of(a, b), 1, strategy);
+        op.run();
 
-        assertTrue(ok);
-        assertEquals(700, a.getAmount());
-        assertEquals(800, b.getAmount());
+        assertEquals(900, a.getAmount());
+        assertEquals(600, b.getAmount());
     }
 
     @Test
@@ -26,24 +32,22 @@ class OperationistTest {
         Account a = new Account(1, 1000, "RUB");
         Account b = new Account(2, 500, "USD");
 
-        Operationist op = new Operationist(null, 0, null);
-        boolean ok = op.transfer(new TransferRequest(a, b, 300));
+        Operationist op = new Operationist(List.of(a, b), 1, strategy);
+        op.run();
 
-        assertFalse(ok);
         assertEquals(1000, a.getAmount());
         assertEquals(500, b.getAmount());
     }
 
     @Test
     void transferShouldFailIfInsufficientFunds() {
-        Account a = new Account(1, 200, "RUB");
+        Account a = new Account(1, 50, "RUB");
         Account b = new Account(2, 500, "RUB");
 
-        Operationist op = new Operationist(null, 0, null);
-        boolean ok = op.transfer(new TransferRequest(a, b, 300));
+        Operationist op = new Operationist(List.of(a, b), 1, strategy);
+        op.run();
 
-        assertFalse(ok);
-        assertEquals(200, a.getAmount());
+        assertEquals(50, a.getAmount());
         assertEquals(500, b.getAmount());
     }
 }
