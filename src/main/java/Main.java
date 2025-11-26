@@ -1,6 +1,8 @@
 import dto.Account;
 import service.*;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 
 public class Main {
@@ -17,19 +19,22 @@ public class Main {
         TransferStrategy strategy = new RandomTransferStrategy();
    //     TransferStrategy strategy = new SequentialTransferStrategy(100);
 
-        long begin = System.nanoTime();
+        Instant begin = Instant.now();
 
         service.runTransfers(accounts,5, 40, strategy);
 
-        long end = System.nanoTime();
-        System.out.println("Времени заняло: " + (double)((end - begin)/1_000_000) + " мс");
+        Instant end = Instant.now();
+        Duration duration = Duration.between(begin, end);
+
+        System.out.println("Времени заняло: " + duration.toMillis() + " мс");
 
 /*
-        long begin2 = System.nanoTime();
+        Instant begin2 = Instant.now();
         HappensBeforeDoesntWork checker = new HappensBeforeDoesntWork();
         checker.checkHappensBefore(1_000_000L);
-        long end2 = System.nanoTime();
-        System.out.println("Времени заняло: " + (double)((end2 - begin2)/1_000_000) + " мс");
+        Instant end2 = Instant.now();
+        Duration duration2 = Duration.between(begin2, end2);
+        System.out.println("Времени заняло: " + + duration2.toMillis() + " мс");
 */
     }
 }

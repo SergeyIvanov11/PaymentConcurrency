@@ -2,40 +2,31 @@ package service;
 
 import dto.Account;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class TransferService {
 
-    public void runTransfers(List<Account> accounts, int count, int operations, TransferStrategy strategy) {
+    public void runTransfers(List<Account> accounts, int count, int operations, TransferStrategy strategy) throws InterruptedException {
         System.out.println("В начале сумма средств на всех аккаунтах была: " + sumAccounts(accounts));
 
-        List<Thread> threads = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            Operationist worker = new Operationist(accounts, operations, strategy);
-            Thread t = new Thread(worker, "operationist-" + i);
-            threads.add(t);
-            t.start();
-        }
-        threads.forEach(t -> {
-            try {
-                t.join();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        });
-
-        /*
         ExecutorService service = Executors.newFixedThreadPool(10);
+        CountDownLatch latch = new CountDownLatch(count);
+
         for (int i = 0; i < count; i++) {
-            Operationist worker = new Operationist(accounts, operations);
-            service.submit(worker, "operationist-" + i));
+            service.submit(() -> {
+                try {
+                    new Operationist(accounts, operations, strategy).run();
+                } finally {
+                    latch.countDown();
+                }
+            });
         }
-        service.awaitTermination(10, TimeUnit.SECONDS);
-        */
+        latch.await();
+        service.shutdown();
 
         System.out.println("Все операции завершены");
         System.out.println("После всех операций сумма средств на всех аккаунтах составляет: " + sumAccounts(accounts));

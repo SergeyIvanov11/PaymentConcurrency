@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TransferServiceTest {
     @Test
-    void runTransfersTest() {
+    void runTransfersTest() throws InterruptedException {
         List<Account> accounts = Arrays.asList(
                 new Account(1, 1000, "RUB"),
                 new Account(2, 1000, "RUB"),
@@ -33,7 +33,7 @@ class TransferServiceTest {
         assertEquals(before, after);
         //  assertTrue(accounts.get(0).getAmount() < 1000);
        // assertTrue(accounts.get(1).getAmount() > 1000);
-        assertEquals(accounts.get(0).getAmount(), 950);
-        assertEquals(accounts.get(1).getAmount(), 1050);
+        assertEquals(950, accounts.get(0).getAmount());
+        assertEquals(1050, accounts.get(1).getAmount());
     }
 }
