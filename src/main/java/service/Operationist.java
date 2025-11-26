@@ -37,7 +37,7 @@ public class Operationist implements Runnable {
                     + from.getId() + " и " + to.getId());
             return false;
         }
-
+/*
         for (int i = 0; i < 3; i++) { // попытки захватить локи
             if (from.getLock().tryLock()) {
                 try {
@@ -65,8 +65,34 @@ public class Operationist implements Runnable {
             }
             Thread.yield(); // уступить время другим потокам
         }
-
         System.out.println("Не удалось захватить локи, пропуск операции");
-        return false;
+*/
+        // задаем порядок захвата локов по возрастанию id
+        Account first = from.getId() < to.getId() ? from : to;
+        Account second = from.getId() < to.getId() ? to : from;
+
+        try {
+            first.getLock().lock();
+            try {
+                second.getLock().lock();
+
+                if (from.getAmount() < amount) {
+                    System.out.println("Недостаточно средств " +
+                            "для перевода с аккаунта " + from.getId());
+                    return false;
+                }
+                from.subtract(amount);
+                to.add(amount);
+
+                System.out.println(from.getId() + " перевел "
+                        + to.getId() + " " + amount
+                        + " " + from.getCurrency());
+                return true;
+            } finally {
+                second.getLock().unlock();
+            }
+        } finally {
+            first.getLock().unlock();
+        }
     }
 }

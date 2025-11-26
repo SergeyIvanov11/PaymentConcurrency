@@ -26,12 +26,14 @@ class TransferServiceTest {
             return new TransferRequest(from, to, 1);
         };
 
-        service.runTransfers(accounts, 2, 10, strategy);
+        service.runTransfers(accounts, 5, 10, strategy);
 
         String after = service.sumAccounts(accounts);
 
         assertEquals(before, after);
-        assertTrue(accounts.get(0).getAmount() < 1000);
-        assertTrue(accounts.get(1).getAmount() > 1000);
+        //  assertTrue(accounts.get(0).getAmount() < 1000);
+       // assertTrue(accounts.get(1).getAmount() > 1000);
+        assertEquals(accounts.get(0).getAmount(), 950);
+        assertEquals(accounts.get(1).getAmount(), 1050);
     }
 }
